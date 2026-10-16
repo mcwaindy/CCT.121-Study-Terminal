@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>CCT.121 Study Terminal</title>
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<header id="topbar">
+  <div class="brand"><span class="prompt">&gt;_</span> CCT.121 <small>Computer Crime Investigations</small></div>
+  <label class="scope">Scope <select id="scope"></select></label>
+  <input id="search" type="search" placeholder="Search notes &amp; glossary   ( / )" autocomplete="off">
+  <button id="themeBtn" title="Toggle theme">◐</button>
+</header>
+<div id="layout">
+  <nav id="sidebar"></nav>
+  <main id="content"></main>
+</div>
+
+<!-- Engine -->
+<script src="js/core.js"></script>
+<!-- Study / practice modules (each file registers itself; add new modules here) -->
+<script src="js/modules/home.js"></script>
+<script src="js/modules/notes.js"></script>
+<script src="js/modules/flashcards.js"></script>
+<script src="js/modules/quiz.js"></script>
+<script src="js/modules/glossary.js"></script>
+<script src="js/modules/search.js"></script>
+<script src="js/modules/imgfs.js"></script>
+<script src="js/modules/terminal.js"></script>
+<script src="js/modules/procedures.js"></script>
+<script src="js/modules/custody.js"></script>
+<!-- Boot: loads content/manifest.js, then every chapter it lists -->
+<script src="js/boot.js"></script>
+</body>
+</html>
