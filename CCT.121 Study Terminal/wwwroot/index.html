@@ -2,12 +2,14 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0d1117">
 <title>CCT.121 Study Terminal</title>
 <link rel="stylesheet" href="css/app.css">
 </head>
 <body>
 <header id="topbar">
+  <button id="menuBtn" title="Menu" aria-label="Menu">&#9776;</button>
   <div class="brand"><span class="prompt">&gt;_</span> CCT.121 <small>Computer Crime Investigations</small></div>
   <label class="scope">Scope <select id="scope"></select></label>
   <input id="search" type="search" placeholder="Search notes &amp; glossary   ( / )" autocomplete="off">
@@ -32,6 +34,7 @@
 <script src="js/modules/procedures.js"></script>
 <script src="js/modules/custody.js"></script>
 <!-- Boot: loads content/manifest.js, then every chapter it lists -->
+<script src="js/mobile.js"></script>
 <script src="js/boot.js"></script>
 </body>
 </html>
