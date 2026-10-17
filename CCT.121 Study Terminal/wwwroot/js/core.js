@@ -8,10 +8,34 @@
   CCT.esc = s => String(s ?? "").replace(/[&<>"]/g, c => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" }[c]));
   CCT.CATS = { legal: "Legal", ops: "Operational", apps: "Applied" };
 
+  // Synchronous API backed by an in-memory cache. init() loads from api/state.php; writes are saved back to the
+  // server (debounced) and mirrored to localStorage as a fallback (used when the PHP endpoint is unavailable).
+  const PFX = "cct121.", API = "api/state.php";
+  let cache = {}, serverOk = false, timer = null;
+  const local = () => { const o = {}; try { for (let i = 0; i < localStorage.length; i++) { const k = localStorage.key(i); if (k.startsWith(PFX)) o[k.slice(PFX.length)] = JSON.parse(localStorage.getItem(k)); } } catch { } return o; };
+  const push = () => fetch(API, { method: "POST", headers: { "Content-Type": "application/json", "X-Requested-With": "cct121" }, body: JSON.stringify(cache), keepalive: true }).catch(() => { });
   CCT.store = {
-    get: (k, d) => { try { const v = JSON.parse(localStorage.getItem("cct121." + k)); return v ?? d; } catch { return d; } },
-    set: (k, v) => localStorage.setItem("cct121." + k, JSON.stringify(v))
+    async init() {
+      try {
+        const r = await fetch(API, { cache: "no-store", headers: { "X-Requested-With": "cct121" } });
+        const j = r.ok ? await r.json() : null;
+        if (j && typeof j === "object" && j.ok === true) {
+          serverOk = true; cache = j.data || {};
+          if (!Object.keys(cache).length) { cache = local(); if (Object.keys(cache).length) await push(); }
+          return;
+        }
+      } catch { }
+      cache = local();
+    },
+    get: (k, d) => (cache[k] ?? d),
+    set: (k, v) => {
+      cache[k] = v;
+      try { localStorage.setItem(PFX + k, JSON.stringify(v)); } catch { }
+      if (serverOk) { clearTimeout(timer); timer = setTimeout(push, 400); }
+    },
+    get serverBacked() { return serverOk; }
   };
+  window.addEventListener("pagehide", () => { if (serverOk && timer) { clearTimeout(timer); timer = null; push(); } });
 
   // small stable string hash -> ids that survive reordering of content
   CCT.hash = s => { let h = 5381; for (const ch of String(s)) h = ((h << 5) + h + ch.charCodeAt(0)) | 0; return (h >>> 0).toString(36); };

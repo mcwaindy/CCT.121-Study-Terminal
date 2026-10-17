@@ -6,6 +6,7 @@
     s.onerror = () => { console.warn("Could not load", src); CCT.failed.push(src); res(false); };
     document.head.appendChild(s);
   });
+  await CCT.store.init();
   await load("content/manifest.js");
   for (const f of CCT.manifest) await load("content/" + f);
   CCT.start();
