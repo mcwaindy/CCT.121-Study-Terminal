@@ -1,0 +1,287 @@
+﻿// Study notes built from the NOS.120 lesson material. `code` markup = backticks.
+window.CONCEPTS = {
+  "os-basics": [1, "Software & OS concepts"], "kernel": [1, "The Linux kernel"], "oss": [1, "Open source & licenses"],
+  "history": [1, "UNIX / Linux history"], "distros": [1, "Distributions & package managers"], "usecases": [1, "Linux use cases & servers"], "cloud": [1, "Cloud & DevOps"],
+  "install": [2, "Installation media"], "storage-names": [2, "Storage device naming"], "partitions": [2, "Partitions, MBR/GPT, filesystems"], "swap-lvm": [2, "Swap & LVM concepts"],
+  "shell": [2, "Shell, terminals, su"], "metachar": [2, "Metacharacters & quoting"], "help": [2, "Getting help"], "shutdown": [2, "Shutting down"],
+  "paths": [3, "Paths & navigation"], "filetypes": [3, "File types"], "ls": [3, "Listing & inspecting"], "viewers": [3, "Viewing text/binary files"],
+  "regex": [3, "Regular expressions"], "grep": [3, "grep"], "editors": [3, "Text editors (vi/nano)"],
+  "fhs": [4, "FHS directories"], "filemgmt": [4, "File management"], "finding": [4, "Finding files"], "links": [4, "Hard & symbolic links"],
+  "permissions": [4, "Permissions & chmod"], "umask": [4, "umask"], "special-perms": [4, "SUID/SGID/sticky"], "acl": [4, "ACLs"], "attrs": [4, "Filesystem attributes"],
+  "devfiles": [5, "Device files"], "fstypes": [5, "Filesystem types & mkfs"], "mounting": [5, "Mounting & fstab"], "parttools": [5, "Partitioning workflow"],
+  "lvm": [5, "LVM"], "fsmonitor": [5, "df / du / inodes"], "fsck": [5, "fsck & repair"], "quotas": [5, "Disk quotas"],
+  "virt": [6, "Server hardware & virtualization"], "raid": [6, "RAID"], "san": [6, "SAN: iSCSI / FC / multipath"], "zfsbtrfs": [6, "ZFS & BTRFS"],
+  "hwverify": [6, "Hardware & boot verification"], "rescue": [6, "System rescue / chroot"],
+  "boot": [8, "Boot process"], "grub": [8, "GRUB boot loaders"], "sysv": [8, "SysV init & runlevels"], "systemd": [8, "systemd"],
+  "xwin": [8, "X Windows / Wayland"], "locale": [8, "Time & localization"]
+};
+
+window.NOTES = [
+{ m: 1, title: "Linux Fundamentals", sections: [
+ { c: "os-basics", t: "Software types", b: [
+  "Before talking about Linux itself, it helps to be clear on four kinds of software. A **process** is simply a program that has been loaded into memory and is running. An **application** is software a user interacts with directly, while **OS software** is what controls the hardware underneath.",
+  "Two more terms round out the picture. A **device driver** tells the operating system how to talk to one particular device, and a **service** is a task that runs quietly in the background, such as a print spooler or a DHCP client.",
+ ]},
+ { c: "kernel", t: "The kernel", b: [
+  "The kernel is the core of the operating system, and it communicates with hardware through drivers. What makes a system Linux is the shared kernel; the software layered on top of it is what makes one distribution different from another.",
+  "You can extend a kernel with **kernel modules** or **patches** without having to recompile the whole thing. Kernel versions follow the pattern **major.minor.revision**, so in `5.15.16` the major number is 5, the minor is 15, and the revision is 16. Major and minor numbers show up again later on device files, where the major number identifies the driver category and the minor number identifies the specific device.",
+  "A **production** kernel is stable and carries no suffix. A **development** kernel adds `-rc` (release candidate) to the minor version, which tells you it is still untested.",
+ ]},
+ { c: "oss", t: "Open source & licensing", b: [
+  "**Open source software (OSS)** is software whose source code is freely available to examine, modify and redistribute. Because you are working from source, any change you make has to be **recompiled** before it takes effect.",
+  "Licenses fall into a few groups. The **GPL**, from the Free Software Foundation, is *copyleft*, meaning derivative works must stay open too. **Permissive** licenses place far fewer restrictions on you, and most OSS uses them. **Freeware** costs nothing but is closed source, and **shareware** is free only until some limit is reached, after which you pay.",
+  "Two terms are often confused. A **hacker** expands knowledge by experimenting and is not necessarily malicious, whereas a **cracker** breaks into systems illegally for gain or to cause damage.",
+ ]},
+ { c: "history", t: "UNIX & Linux timeline", b: [
+  "The story starts in the 1960s with MULTICS, a joint project of MIT, GE and Bell Labs. In **1969, Ken Thompson** wrote the first UNIX on a DEC PDP-7. In the early 1970s **Dennis Ritchie** invented the **C** language, and rewriting UNIX in C made it *portable* across different hardware.",
+  "In **1984, Richard Stallman** started the Free Software Foundation and the GNU Project and created the GPL. In **1991, Linus Torvalds** began the Linux kernel, starting from MINIX on x86 hardware and releasing it under the GPL. The term 'open source' itself was coined in **1998**.",
+  "UNIX has many flavors, including FreeBSD, OpenBSD, NetBSD, HP-UX, Solaris, AIX, macOS and iOS.",
+ ]},
+ { c: "distros", t: "Distros, GUI, package managers", b: [
+  "A **distribution** bundles the kernel with libraries and a curated set of open source packages. It may ship a **distribution kernel**, which is patched and often long-term supported. Common examples are Red Hat, openSUSE, Debian, Ubuntu, Gentoo, Mint, Kali and Arch.",
+  "The graphical side is built on **X Windows**, which has evolved from XFree86 to X.org and now **Wayland**. **GNOME** has a feel similar to macOS, while **KDE** feels more like Windows. A **headless** system has no GUI at all, which is common on servers and security-focused distros.",
+  "Software is installed through a package manager. **RPM** (`.rpm`) is the Red Hat family format and the most widely supported. **DPM** (`.deb`) is used by Debian, Ubuntu and Mint. **Sandbox** managers such as Snap, Flatpak and AppImage install everything as one isolated unit. A **tarball** (`.tar.gz`) is a compressed archive that must be installed manually and, importantly, does *not* update the software database.",
+ ]},
+ { c: "usecases", t: "Use cases, servers, virtualization", b: [
+  "A Linux server can be deployed three main ways. **Bare metal** means installing directly on the hardware. **Virtual machines** run on a hypervisor such as Hyper-V, ESXi, KVM, QEMU or Xen. **Containers** such as Docker, Podman and LXC *share the host's kernel*, which makes them lighter than VMs.",
+  "**Clustering** combines many computers so they act as one. In a **Beowulf** cluster, a head node hands out tasks to compute nodes and collects their results, using the **MPI** framework (OpenMPI, for example) to communicate.",
+  "Linux also fills many network roles: routing, **firewalls** (`iptables` or `nftables`, which live in the kernel), **proxies** like Squid that cache content and keep a NAT table, **NGFW/UTM** appliances (IDS/IPS, VPN, and SIEM tools such as OSSIM), and **load balancers**.",
+  "It runs on many architectures too: x86 and x86_64, ARM and ARM64 (Raspberry Pi, AWS Graviton), MIPS, RISC-V, PPC, and S/390 mainframes. IoT devices often run a custom Linux build.",
+ ]},
+ { c: "cloud", t: "Cloud & DevOps", b: [
+  "A **web app** runs on a web server, a **cloud server** hosts web apps, and **the Cloud** is all of those servers interconnected.",
+  "Software reaches production through a CI/CD pipeline. A developer **pushes** code, **CI** handles peer review and tests, **orchestration** retrieves and compiles the code, **build automation** produces a container or VM image, and **CD** deploys it to the live environment. **DevOps** is the team that manages this pipeline end to end, combining development and operations.",
+ ]},
+]},
+{ m: 2, title: "Installation & Shell Fundamentals", sections: [
+ { c: "install", t: "Install media & stages", b: [
+  "Installation media can be booted over the network with **PXE** (the NIC must support it), or from an **ISO** on a DVD or USB drive. **Live media** runs entirely in RAM, so you can test your hardware before committing to an install.",
+  "The installer moves through a few stages: start, language and localization, **partitions and filesystems**, and finally user accounts.",
+  "You end up with two kinds of account. **root** has no valid password by default, so you set one with `sudo passwd root`, and a regular user is used for everyday work. You should never use root day-to-day.",
+ ]},
+ { c: "storage-names", t: "Device naming", b: [
+  "Older PATA drives are named `hda`, `hdb`, `hdc` and `hdd`, which is a maximum of four (primary and secondary channels, master and slave on each). SATA, SCSI and SAS drives are named `sda`, `sdb`, `sdc` and so on, and NVMe drives follow the `nvme0n1p1` pattern.",
+  "USB flash drives are treated as **SCSI** devices, so a flash drive appears as `/dev/sdb` if `sda` is the main disk.",
+ ]},
+ { c: "partitions", t: "Partitions & filesystems", b: [
+  "**MBR** supports four primary partitions (or three plus one extended), a maximum disk size of **2 TB**, and BIOS booting. **GPT** supports 128 partitions and disks up to 9.4 ZB, is required for UEFI, and needs no extended partition.",
+  "Common filesystem types are **ext4** (the journaled default), **XFS** (the RHEL default, good with large files), **Btrfs** (copy-on-write with snapshots), **vfat** (used for `/boot/efi`) and **swap**.",
+  "A typical layout uses `/boot` at 500 MB to 1 GB, `/boot/efi` at 100 to 500 MB of vfat on UEFI systems only, `/` at 20 GB or more, `/home` taking the rest, and swap equal to RAM up to 8 GB (or twice RAM if you hibernate). Keeping `/home` separate means you can reinstall the OS without touching user data.",
+ ]},
+ { c: "swap-lvm", t: "Virtual memory & LVM", b: [
+  "**Swap** uses disk space as overflow for RAM, and too much swapping is called *thrashing*. A swap **partition** is faster, while a swap **file** can be resized.",
+  "**LVM** adds layers of abstraction. A **physical volume (PV)** feeds a **volume group (VG)**, which is a pool of storage, and from the pool you carve **logical volumes (LV)**, the virtual partitions that actually receive a filesystem. This lets you resize volumes online, span multiple disks and take snapshots. The trade-off is that recovery is harder if the VG metadata is damaged. **LUKS** is the encryption layer.",
+ ]},
+ { c: "shell", t: "Shell, terminal, kernel", b: [
+  "The kernel (`/boot/vmlinuz`) talks to a terminal, which is the login channel, and the terminal runs a **shell** such as `/bin/bash`. The shell interprets your commands into system calls.",
+  "You reach the CLI virtual terminals `tty1` through `tty6` with **Ctrl+Alt+F1 to F6**. The GUI login screen (**GDM**) runs on `tty1`, your first desktop session on `tty2`, and later sessions on `tty3` and up. **Root can't log in through GDM**, so use a CLI tty. **SSH** gives encrypted remote access and replaces Telnet.",
+  "A command has a simple anatomy: the command, then a **short option** like `-l` (which can be stacked as `-la`), a **long option** like `--all` (which cannot be stacked), and an argument.",
+  "To become root, `su` switches user but keeps *your* environment, while **`su -`** gives a full login environment and is the preferred form. Use `su -c cmd root` to run a single command, or `su - user1` to become another user.",
+ ]},
+ { c: "metachar", t: "Metacharacters & quoting", b: [
+  "The shell gives special meaning to certain characters. `$` expands a variable's value, `*` matches zero or more characters, `?` matches exactly one, `>` redirects output and overwrites, `>>` redirects and appends, `|` pipes one command's output into another's input, `&` runs a command in the background, and `;` runs commands one after another. A backtick performs command substitution.",
+  "Quoting turns that special meaning off. **Single quotes** (`'...'`) escape *everything*. **Double quotes** (`\"...\"`) still allow `$`, `/` and the backtick to work. A **backslash** (`\\`) escapes just the one character after it.",
+ ]},
+ { c: "help", t: "Getting help", b: [
+  "`man cmd` opens a command's manual page, and you can pick a section, as in `man 5 passwd` where section 5 covers file formats. `man -k word` searches by keyword and is the same as `apropos`. `whatis cmd` gives a one-line description, and `info cmd` shows the deeper GNU documentation. For shell built-ins, use `help cmd`.",
+  "A useful rule of thumb: **if there is no man page, the command is probably a shell built-in** such as `cd`, `echo` or `alias`, so reach for `help`.",
+ ]},
+ { c: "shutdown", t: "Shutting down safely", b: [
+  "Use `shutdown -P +N` to power off in N minutes, `shutdown -r +N` to reboot, and `shutdown -h now` to halt immediately. `poweroff` and `reboot` work as shortcuts.",
+  "On a multi-user machine, run `wall message` *before* shutting down so every terminal sees your warning. And never just cut the power, because that can corrupt the filesystem.",
+ ]},
+]},
+{ m: 3, title: "The Linux Filesystem", sections: [
+ { c: "paths", t: "Paths & navigation", b: [
+  "Linux uses a single directory tree rooted at `/`. An **absolute** path starts with `/`, and a **relative** path does not.",
+  "A few shortcuts make navigation easier: `~` is your home directory, `~mary` is mary's home, `.` is the current directory and `..` is its parent. Home directories live in `/home/user`, but **root's home is `/root`**.",
+  "`pwd` prints the working directory, `cd ~` takes you home, `cd ..` goes up one level and `cd ../..` goes up two.",
+ ]},
+ { c: "filetypes", t: "File types (first char of ls -l)", b: [
+  "The first character of an `ls -l` line tells you the file type. `-` is a regular or executable file, `d` a directory, `l` a symlink, `b` a block device such as an HDD or SSD, `c` a character device such as a keyboard or serial port, `p` a named pipe (FIFO) and `s` a socket.",
+  "With `ls -F`, markers are appended to names instead: `/` for a directory, `*` for an executable, `@` for a symlink, `|` for a pipe and `=` for a socket. It is also wise to avoid shell metacharacters in filenames.",
+ ]},
+ { c: "ls", t: "ls, file, stat, tree", b: [
+  "Useful `ls` options are `-a` for hidden (dot) files, `-l` for long format, `-R` for recursive, and combinations like `-la`. Adding `-i` shows inode numbers.",
+  "The `ls -l` columns, in order, are type and permissions, link count, owner, group, size in bytes, modification date and time, and name. A symlink is shown as `name -> target`.",
+  "`file` identifies a file from its content (its magic bytes), not its extension. `stat` shows inode detail, including the **atime, mtime and ctime** timestamps. `tree` draws an indented visual tree of a directory.",
+ ]},
+ { c: "viewers", t: "Viewing files", b: [
+  "`cat` prints a file (use `-n` to number the lines) and `tac` prints it in reverse order. `head -N` and `tail -N` show the first or last N lines, and **`tail -f` follows a file live**, which is ideal for watching logs.",
+  "For longer files, `more` pages forward only (Space, Enter, q), while `less` can move forward and back and search with `/pattern`. `diff f1 f2` compares two files, marking lines from file1 with `<` and lines from file2 with `>`. To page any long output, pipe it, as in `ls -l /etc | less`.",
+  "**Binary files** need care. Don't `cat` them, because that can corrupt your terminal (`reset` fixes it). Use `strings` for printable text, `od` for octal (`od -x` for hex), or `file` to identify them.",
+ ]},
+ { c: "regex", t: "Regular expressions", b: [
+  "A regular expression is a pattern for matching text *inside* files, used by tools like grep, sed and awk. Shell wildcards are different, because they match *filenames*, and the `*` character means different things in each.",
+  "There are two flavors. **BRE** is the default for grep and sed, and **ERE** is used by `egrep`, `grep -E`, `sed -r` and awk.",
+  "Both flavors support `.` for any character, `*` for zero or more of the preceding item, `^` for the start of a line, `$` for the end, `[abc]` for a character class and `[^0-9]` for a negated class. **Only ERE** adds `?` (zero or one), `+` (one or more), `{n,m}` (repetition) and `(a|b)` (alternation).",
+ ]},
+ { c: "grep", t: "grep", b: [
+  "`grep` prints matching **lines**. It matches substrings, so `we` will hit `well`; add `-w` to match whole words. `egrep` is the same as `grep -E`, and `fgrep` is `grep -F`, which treats the pattern as fixed text and is the fastest.",
+  "Handy options are `-v` to invert the match, `-i` to ignore case, `-n` for line numbers, `-c` for a count, `-l` to list only filenames and `-r` to search recursively.",
+  "Examples: `grep \"^I\" file`, `egrep \"(lodge|Lake)\" file` and `grep -r error /var/log/`.",
+ ]},
+ { c: "editors", t: "Editors", b: [
+  "**vi/vim** is a bimodal editor that starts in **Command mode**, and `Esc` always returns you there. To enter Insert mode, use `i` (before the cursor), `I` (line start), `a` (after), `A` (line end), `o` (new line below) or `O` (new line above).",
+  "For navigation, `w`, `e` and `b` move by words, `0` or `^` jump to line start, `$` to line end, `G` to the last line, and `53G` to line 53. For editing, use `x`, `dw`, `dd`, `3dd` and `d$` to delete, `yy` or `yw` to yank, `p` or `P` to paste, `u` to undo, `.` to repeat and `J` to join lines.",
+  "Search with `/pat` or `?pat`, then `n` and `N` for the next or previous match. Colon commands include `:w`, `:q`, `:wq`, `:q!`, `:w name`, `:!date`, `:r !date`, `:r file`, `:s/the/THE/g`, `:1,$ s/the/THE/g` and `:set number`.",
+  "**nano** is friendlier: Ctrl+O saves, Ctrl+X exits, Ctrl+W searches, Ctrl+K cuts a line and Ctrl+U pastes. **Emacs** saves with `Ctrl+X Ctrl+S` and exits with `Ctrl+X Ctrl+C`, and **gedit** is a GUI editor.",
+ ]},
+]},
+{ m: 4, title: "File Management, Permissions & Links", sections: [
+ { c: "fhs", t: "FHS directories", b: [
+  "The Filesystem Hierarchy Standard defines what lives where. `/bin` holds user commands and `/sbin` administrative commands. `/boot` has the kernel and boot loader, `/dev` the device files, `/etc` configuration, `/home` user data, and `/lib` libraries and modules. `/media` is for removable media and `/mnt` for temporary mounts, `/opt` for third-party software, `/root` is root's home, and `/tmp` is for temporary files.",
+  "Two directories are virtual: `/proc` exposes process and kernel information and `/sys` exposes hardware information. `/usr` holds most commands, with `/usr/local` for local installs, and `/var` holds variable data such as logs and spools.",
+  "On modern systems, `/bin`, `/sbin` and `/lib` are symlinks into `/usr`. Within `/usr`, `/usr/share` holds architecture-independent data, `/usr/src` holds source code and `/usr/include` holds C headers.",
+ ]},
+ { c: "filemgmt", t: "mkdir / mv / cp / rm", b: [
+  "`mkdir` creates directories, `rmdir` removes *empty* directories only, `unlink` removes a single file, and `touch` creates an empty file or updates the modification time of an existing one.",
+  "The behavior of `mv` depends on the target. If the target is a directory, the source is moved into it. If it is an existing file, that file is **overwritten**. If the target doesn't exist, the source is simply **renamed**.",
+  "`cp -r` is required to copy directories (otherwise you get 'omitting directory'), `-i` asks before overwriting and `-f` forces. `rm -r` (or `-R`) is recursive, and **`rm -rf` gives no prompt and no recovery**. Fedora aliases `cp`, `mv` and `rm` to their `-i` forms, and `alias` lists your aliases.",
+ ]},
+ { c: "finding", t: "Finding files", b: [
+  "`locate` is fast because it searches a prebuilt database (`/var/lib/plocate/plocate.db`), but the results may be stale until you refresh it with `updatedb`. You can prune paths through `/etc/updatedb.conf`.",
+  "`find` searches the live filesystem, so it is always current but slower. For example, `find dir -name \"host*\"`. Use `-type d` or `-type f` to filter by type and `-size +8192k` for size, and always quote your wildcards.",
+  "For commands specifically, `which` is the fastest because it only searches `$PATH` and also reveals aliases. `type` returns only the first result, and `whereis` reports the binary plus its man and info pages.",
+  "`$PATH` is a colon-delimited list of directories the shell searches for executables, and you can view it with `echo $PATH`. If a command isn't found in any of them, you get 'command not found'.",
+ ]},
+ { c: "links", t: "Hard vs symbolic links", b: [
+  "To understand links, remember that a filesystem has three parts: the **superblock** (metadata), the **inode table** (size, permissions, owner and block pointers for every file) and the **data blocks** (file contents and filenames).",
+  "A **hard link** (`ln file1 file2`) shares the same inode and data, must be on the same filesystem, and raises the link count by one. The data survives until the count reaches zero.",
+  "A **symbolic link** (`ln -s target link`) has its own inode and simply stores the target's path. It can cross filesystems, can point to directories, and becomes **dangling** if the target is deleted. It shows as type `l` in `ls -l` and with an `@` in `ls -F`. Verify either kind with `ls -li` to compare inode numbers.",
+ ]},
+ { c: "permissions", t: "Ownership & chmod", b: [
+  "The creator of a file becomes its owner and their primary group becomes the group owner. Only the owner and root can run chmod or chown. Permissions are evaluated **user, then group, then other**, and they are not additive: the first match wins.",
+  "On a **file**, `r` means read, `w` means edit and `x` means execute. On a **directory**, `r` lets you list contents (it needs `x` too), `w` lets you add or remove files (also needs `x`), and `x` lets you enter it. **The `x` bit on a directory is the master switch.**",
+  "`chown user[:group] file` changes ownership (a `.` separator also works), `chgrp group file` changes the group, `-R` makes either recursive, and `whoami` and `groups` show who you are and which groups you belong to.",
+  "`chmod` has two syntaxes. Symbolic uses `u g o a` with `+ - =` and `r w x`, as in `chmod u+w,g=r,o-x f`, or `chmod +x f` for everyone. Numeric uses **r=4, w=2, x=1**. The common modes are **644** for files, **755** for directories and programs, **750** for restricted access and **700** for private.",
+ ]},
+ { c: "umask", t: "umask", b: [
+  "The umask subtracts permissions from **newly created** files and directories only; use chmod for existing ones.",
+  "New files start from **666** and directories from **777**. With `umask 022`, files become **644** and directories **755**. With `umask 007`, all permissions for 'other' are removed.",
+ ]},
+ { c: "special-perms", t: "SUID / SGID / sticky", b: [
+  "**SUID (4)** makes an executable run as the file's owner, as with `/usr/bin/passwd`, and it is **ignored on scripts**. **SGID (2)** on a file makes it run as the group, and on a **directory** it makes new files inherit the directory's group. **Sticky (1)** on a directory means only a file's owner can delete it, as with `/tmp`.",
+  "Set them numerically: `chmod 4755 f` (SUID), `6755` (SUID and SGID), `1777 dir` (sticky) and `7777` (all). A capital `S` or `T` in `ls` output means the bit is set but there is **no execute** permission, so it is non-functional.",
+ ]},
+ { c: "acl", t: "ACLs", b: [
+  "ACLs extend the owner, group and other model to specific users and groups. `setfacl -m u:bob:r-- doc1` grants bob read access, `getfacl doc1` displays the ACL and `setfacl -b doc1` removes all entries.",
+  "A file with an ACL shows a `+` in `ls -l` (for example `-rw-rw-r--+`). The **mask** caps the effective permissions of all the extra ACL entries.",
+ ]},
+ { c: "attrs", t: "Filesystem attributes", b: [
+  "`lsattr file` lists attributes and `chattr +i file` or `chattr -i file` sets or clears them. The **immutable** attribute (`i`) prevents modifying, deleting, renaming or linking the file, **even for root**. The `e` attribute means extents and is on by default.",
+ ]},
+]},
+{ m: 5, title: "Filesystem Administration", sections: [
+ { c: "devfiles", t: "Device files", b: [
+  "Device files live in `/dev` and take up 0 KB because they are only inodes. A **block** device (`b`) covers disks, USB drives and CDs, while a **character** device (`c`) covers things like serial ports and keyboards.",
+  "The major number identifies the driver and the minor number the specific device or partition. If a file is missing, udev didn't detect the hardware, and a corrupted one shows up as a regular file, which you can find with `find /dev -type f`.",
+  "Useful commands are `ls -l /dev`, `lsblk`, `cat /proc/devices`, `ls /sys/block` and `mknod /dev/sda1 b 8 1` (type, major, minor). SATA partitions look like `/dev/sda1`, NVMe like `/dev/nvme0n1p1` (device, **n**amespace, **p**artition), and `/dev/cdrom` links to `/dev/sr0`.",
+ ]},
+ { c: "fstypes", t: "Filesystem types & mkfs", b: [
+  "The filesystem types you need to know are ext2 (no journal, the `mkfs` default), ext3 (adds a journal), **ext4**, **xfs**, vfat (32 GB maximum), **exfat** (128 PB, for drives over 32 GB), iso9660 (CD/DVD, read-only) and tmpfs/devtmpfs (RAM-based).",
+  "Create one with `mkfs -t ext4 /dev/sdb1`, `mkfs -t vfat` or `mkfs -t exfat`; `mke2fs` makes ext2. Every filesystem gets a **UUID**, which you can see with `blkid` or `lsblk --fs`.",
+  "Labels are set with `e2label` (ext), `fatlabel`, `exfatlabel` or `xfs_admin`.",
+ ]},
+ { c: "mounting", t: "Mounting & /etc/fstab", b: [
+  "Mounting attaches a filesystem to a **mount point**, which should be an empty directory because mounting over a non-empty one *hides* its files.",
+  "`mount` alone lists mounts, `mount -t ext4 /dev/sdb1 /mnt/data` mounts a device, `mount -a` mounts everything in fstab and `umount` detaches by device or directory. `fuser -u /mnt/data` shows who is using it and `df -hT` shows what is mounted.",
+  "Each fstab line has six fields: **device, mount point, type, options, dump number, fsck number**. The fsck number is 1 for root (checked first), 2 for others and 0 to skip. The device can be a path or `UUID=`, `PARTUUID=` or `LABEL=`.",
+  "If `umount` says 'Device busy', your current directory is probably inside it, so `cd` away first. For optical media, use `mount -r /dev/cdrom /media/CD` and `eject`. To mount an ISO, use `mount -o loop x.iso /mnt`, and to create one, use `mkisofs -RJ -o out.iso /data` (R is Rock Ridge, J is Joliet).",
+  "On a desktop, media is auto-mounted at `/run/media/user/label`, and `lsusb` confirms that a USB device is detected.",
+ ]},
+ { c: "parttools", t: "Partitioning workflow", b: [
+  "`fdisk` handles MBR and GPT (inside it: `m` help, `p` print, `n` new, `d` delete, `t` type, `w` write). `cfdisk` is semi-graphical, `gdisk` is GPT-only and `parted` is another general tool.",
+  "The standard workflow is **fdisk, then `w`, then `partprobe`, then `mkfs`, then `mount`, then `/etc/fstab`**. Nothing is changed on disk until you write with `w`.",
+  "With MBR, `sda1` through `sda4` are primary, an extended partition counts as one of those four, and **logical drives start at `sda5`**. For swap, run `mkswap /dev/sda4`, then `swapon` to activate and `swapoff` to deactivate; multiple swap areas, including zram, are combined. A disk is made up of tracks, sectors (the smallest unit), blocks and cylinders.",
+ ]},
+ { c: "lvm", t: "LVM commands", b: [
+  "LVM stacks **PV, VG, LV**, and the physical extent (PE) size, about 4 MB, is fixed when the VG is created.",
+  "A full build looks like this: `pvcreate /dev/sda4`, then `vgcreate vg00 /dev/sda4`, then `lvcreate -L 10G -n data1 vg00`, then `mkfs -t ext4 /dev/vg00/data1`, then mount it and add it to fstab. The path `/dev/vg00/data1` is the same as `/dev/mapper/vg00-data1`.",
+  "To extend, run `pvcreate` on the new disk, `vgextend vg00 /dev/sdb1`, then **`lvextend -r -L +5G /dev/vg00/data2`**. Without `-r`, resize the filesystem yourself with `resize2fs` (ext4) or `xfs_growfs` (XFS).",
+  "For information, use `pvs`, `vgs` and `lvs` (plus the `*display` and `*scan` variants). For removal, use `pvremove`, `vgremove` and `lvremove`. There are also `vgreduce`, `lvreduce`, `lvresize` and the `*change` commands.",
+ ]},
+ { c: "fsmonitor", t: "Monitoring space", b: [
+  "`df -h` shows free space in readable units, `df -hT` adds the filesystem type and **`df -i` shows inode usage**. `du -h path` shows usage by directory and `du -hs path` gives a summary. If the root filesystem has under 10% free, you are in trouble.",
+  "Remember that many small files can exhaust **inodes** before they use up space. Also, `df` only reports mounted filesystems, while `lsblk` shows all block devices.",
+ ]},
+ { c: "fsck", t: "fsck & repair", b: [
+  "Filesystem corruption usually comes from an improper shutdown (the most common cause), heavy I/O or bad blocks. **Always unmount first**; for the root filesystem, use single-user mode or live media.",
+  "Useful `fsck` options are `-f` (force), `-y` (answer yes automatically), `-A` (all filesystems in fstab), `-AR` (the same but skipping root), `-C` (progress) and `-V` (verbose). Files that can't be repaired end up in `lost+found/`, named by inode number.",
+  "For ext filesystems, use `e2fsck`, `e2fsck -c` or `badblocks`, and `tune2fs -i 20d` to set the check interval (0 disables it). For XFS, use `xfs_db`, `xfs_repair` and `xfs_fsr` (defragmentation).",
+ ]},
+ { c: "quotas", t: "Disk quotas", b: [
+  "A **soft limit** can be exceeded during a **grace period (7 days by default)**, while a **hard limit** can never be exceeded.",
+  "The procedure is: add `usrquota,grpquota` to fstab, remount with `mount -o remount,rw`, build the quota files with `quotacheck -mavugf -F vfsv0`, enable them with `quotaon -avug`, then set limits with `edquota -u user` (one block is about 1 KB, and 0 means no limit). Set the grace period with `edquota -u -t`, then report with `repquota /data1` and check with `quota`.",
+  "You can disable quotas with `quotaoff`, root can check anyone with `quota user1`, and XFS uses `xfs_quota`. Journaled quotas use the options `usrjquota=aquota.user,grpjquota=aquota.group,jqfmt=vfsv0`.",
+ ]},
+]},
+{ m: 6, title: "Server Administration Fundamentals", sections: [
+ { c: "virt", t: "Hardware & virtualization", b: [
+  "Servers come as **rackmount** units (1U is **1.75 inches**), **blades** (a shared enclosure with each blade running its own OS) or **towers**. A shared KVM folds into the rack, and administration is done remotely. A **SAN** provides shared storage and a **UPS** provides battery backup.",
+  "A **hypervisor** lets one machine host several virtual machines. **Type I** (bare-metal) runs directly on hardware, such as ESXi, Hyper-V, KVM/QEMU and Xen. **Type II** (hosted) runs as an application on a host OS, such as VirtualBox, VMware Workstation and GNOME Boxes. Hypervisors solved the problem of server sprawl. They need CPU support, **Intel VT-x** or **AMD-V**, which you enable in the BIOS/UEFI.",
+  "A virtual hard disk can be **thick** (preallocated, with predictable performance) or **thin** (it grows as needed). The file extensions are `.vhdx` for Hyper-V, `.vmdk` for VMware and `.qcow2` for KVM and Xen. A snapshot (a **checkpoint** in Hyper-V) creates a second VHD that tracks changes.",
+  "On Linux, **KVM** is built into the kernel and works with **QEMU** and **libvirt**. **GNOME Boxes** uses SPICE and QXL and stores config in `~/.config/libvirt/qemu`. `virt-manager` is the full GUI and **`virsh`** is the command-line tool for headless systems.",
+ ]},
+ { c: "raid", t: "RAID levels", b: [
+  "**RAID 0** is striping across two disks with NO fault tolerance. **RAID 1** is mirroring across two. **RAID 3** uses a dedicated parity disk and **RAID 4** uses block parity. **RAID 5** uses distributed parity, needs three disks, survives one failure and is the most common. **RAID 6** uses double parity, needs four disks and survives two failures. **RAID 10** combines striping and mirroring and needs four disks.",
+  "RAID can be implemented in hardware, firmware or software (`mdadm`), for example `mdadm --create /dev/md0 --level=5 --raid-devices=4 /dev/sdb /dev/sdc /dev/sdd /dev/sde`. In fstab, use the **UUID** rather than `/dev/md0`.",
+  "On the interface side, parallel SCSI uses IDs 0 to 15, while **SAS** is serial, supports 65,535 devices and has SATA-compatible connectors.",
+ ]},
+ { c: "san", t: "SAN: iSCSI, FC, multipath", b: [
+  "**iSCSI** carries SCSI over Ethernet. The server is the **initiator**, the SAN is the **target**, and the disk appears as something like `/dev/sdb`. Discover targets with `iscsiadm -m discovery -t st -p IP`, then log in with `iscsiadm -m node --login`. Set `node.startup = automatic` in `/etc/iscsi/iscsid.conf` to reconnect at boot.",
+  "**Fibre Channel** uses an FC **HBA**, **WWN** identifiers and proprietary firmware. Check the card with `lspci`; IDs appear under `/dev/disk/by-id`.",
+  "**DM-MPIO** (multipath) uses multiple paths to a device for fault tolerance and load balancing. Enable it with `mpathconf --enable --with_multipathd y`, configure `/etc/multipath.conf`, use devices like `/dev/mapper/mpath1` and inspect with `multipathd -k`.",
+ ]},
+ { c: "zfsbtrfs", t: "ZFS & BTRFS", b: [
+  "**ZFS** is self-healing and offers snapshots, deduplication, compression and quotas. Its configuration lives in the volume itself, **not in fstab**. It is organized as a **zpool** (the devices), then a **volume**, then a **dataset**.",
+  "`zpool create data1 /dev/sdb` creates a pool mounted at `/data1`. Adding `mirror` makes RAID 1, `raidz` is like RAID 5 (3 or more disks), `raidz2` needs 4 or more and `raidz3` needs 5 or more. Manage pools with `zpool list`, `status` and `destroy`, and datasets with `zfs create`, `list`, `get all`, `set quota=500G` and `mount -a`. RAID-Z avoids the **RAID 5 write hole**.",
+  "**BTRFS** uses B-trees and supports subvolumes and snapshots, but its **RAID 5/6 and quotas are NOT production-ready**. Examples: `mkfs.btrfs -m raid1 -d raid1 /dev/sdb /dev/sdc`, `mount -o compress=lzo` (LZO is the preferred compression), `btrfs check`, `btrfs subvolume create` and `btrfs device add`.",
+  "A typical server puts the OS on RAID 1 (two drives) and data on RAID 5, 6 or 10, a SAN, or ZFS raidz. **SAN and ZFS** are the most common choices.",
+ ]},
+ { c: "hwverify", t: "Verify hardware & boot", b: [
+  "`/proc` (procfs, with files like dmesg, meminfo, modules, mounts, mdstat, partitions, swaps and loadavg) and `/sys` (sysfs) are virtual filesystems that live in RAM.",
+  "To inspect hardware, use `lscpu`, `lsmem`, `lsdev`, `lspci`, `lsusb`, `lsscsi` and `lsblk`. **`lshw`** is the most versatile (try `-class video`), and you can also use `hwinfo --short --storage`, `dmidecode -t memory`, `dmesg` and `journalctl -k`. If a device appears in dmesg but not lshw, try `hwinfo`; if it is in neither, the driver is missing.",
+  "Boot results are in `/var/log/boot.log` (showing [ OK ] or [FAILED]), `/var/log/messages` or `syslog`, and `journalctl -b --since=today`.",
+  "For a server install, use a static IP, a hostname that matches DNS, usually *disable* automatic updates, and install only the packages you need.",
+ ]},
+ { c: "rescue", t: "System rescue", b: [
+  "To rescue a system, boot **live media**. Typical problems include the boot loader, filesystem or partition errors, config files, drivers and a **lost root password**.",
+  "Run `fsck` on unmounted partitions. To reset a root password with **chroot**, mount the root partition with `mount /dev/sda2 /mnt`, run `chroot /mnt`, then `passwd`, then `exit` and reboot.",
+ ]},
+]},
+{ m: 8, title: "System Initialization, X Windows & Localization", sections: [
+ { c: "boot", t: "Boot process", b: [
+  "The boot sequence is **POST** (the BIOS hardware test), then the boot loader, then the kernel, then the **init** daemon. Network booting requires **PXE** and uses NFS, HTTP or FTP.",
+  "The boot loader lives in the MBR/GPT, or in an active partition (**only one per disk**). On **UEFI** systems it is loaded from the **UEFI System Partition**, and **Secure Boot** checks its signature. Once the kernel is loaded, the boot loader is no longer active.",
+ ]},
+ { c: "grub", t: "GRUB Legacy vs GRUB2", b: [
+  "**GRUB Legacy** (1999, MBR) runs in stages: Stage 1 in the MBR, **Stage 1.5** in the 30 KB after it (filesystem support) and then **Stage 2**. Its config is `/boot/grub/grub.conf`, partitions are named `hd0,0` (**zero**-indexed), `grub-install` reinstalls it and it can be password-protected.",
+  "**GRUB2** supports MBR, GPT and NVMe. On UEFI, Stage 1 is `grubx64.efi`. Partitions are **one**-indexed, as in `hd0,gpt2` or `msdos`. **`grub.cfg` is auto-generated and should not be edited.** Instead, edit `/etc/default/grub` and the scripts in `/etc/grub.d/`, then run `grub2-mkconfig -o /boot/grub2/grub.cfg`. The last menu choice is kept in `grubenv`.",
+  "The **initramfs** is a RAM image containing modules needed at boot. A bad config or damaged initramfs causes a **kernel panic**, and you fix it from live media with `grub2-mkconfig` or `dracut`.",
+ ]},
+ { c: "sysv", t: "SysV init & runlevels", b: [
+  "There are three init systems. **SysV** uses runlevels and rc scripts, **Upstart** is event-driven, and **systemd** is the modern one and remains compatible with SysV.",
+  "The runlevels are **0** halt, **1** (also s, S or single) single-user mode for root only, **2** multiuser, **3** multiuser with network services, **4** unused, **5** graphical and **6** reboot.",
+  "Use `runlevel` to see the current level, and `init 3` or `telinit 1` to change it. The default is set in `/etc/inittab` with `id:5:initdefault:`.",
+  "Scripts in `/etc/rc<N>.d` are named **S**nn (start) or **K**nn (kill) and run alphabetically. Control daemons with `/etc/init.d/cron restart` or `service cron restart`, and configure startup with `chkconfig cron on` or `chkconfig --list`. Upstart config lives in `/etc/init`.",
+ ]},
+ { c: "systemd", t: "systemd", b: [
+  "systemd manages **units**: `.service` (daemons), `.target` (runlevels), `.socket`, `.timer` (like cron) and `.mount` (like fstab entries). Targets map to runlevels: `poweroff` is 0, `rescue` is 1, `multi-user` is 2, 3 and 4, `graphical` is 5 and `reboot` is 6.",
+  "You manage units with `systemctl`, using `start`, `stop`, `restart`, `reload`, `status`, `enable`, `disable`, `is-enabled`, `list-units`, `list-unit-files`, `isolate <target>`, `get-default` and `set-default <target>`.",
+  "The default target is a symlink at `/etc/systemd/system/default.target`. Unit files live in `/lib/systemd/system/`, but **overrides in `/etc/systemd/system/` win**, so never edit anything in /lib.",
+  "`systemd-analyze` shows boot performance, `blame` lists the slowest units first and `critical-chain` shows the critical path. A unit file has a `[Unit]` section (After, Requires, Wants), a `[Service]` section (ExecStart) and an `[Install]` section (WantedBy).",
+ ]},
+ { c: "xwin", t: "X Windows & display managers", b: [
+  "The graphical stack builds up from a display server (**X.org** or **Wayland**), through X clients and a window manager (Mutter or KWin), to a desktop environment (GNOME or KDE). X11 is client-server, so **clients can run on a different machine** from the display. `/etc/X11/xorg.conf` is the legacy config file.",
+  "**Wayland** has built-in compositing, is more secure and has lower latency, and **XWayland** lets it run X11 applications.",
+  "Display managers handle graphical login: **GDM** (GNOME, on tty1), **SDDM** (KDE), **LightDM** (lightweight) and **XDM** (the classic).",
+ ]},
+ { c: "locale", t: "Time & localization", b: [
+  "The kernel keeps time as the **epoch**, the number of seconds since 1970-01-01 UTC. There is a **hardware clock (RTC)** and a **system clock** kept in RAM. Use `hwclock --show` to read the hardware clock, `--systohc` to copy system time to hardware and `--hctosys` to do the reverse.",
+  "Time zones are stored in `/usr/share/zoneinfo`, with `/etc/localtime` linking to the active one. `timedatectl` handles it all, with `list-timezones`, `set-timezone America/New_York`, `set-time` and `set-ntp true` (which uses systemd-timesyncd; chronyd and ntpd are more advanced options).",
+  "A locale such as `en_US.UTF-8` is controlled by `LANG` (the master setting), `LC_TIME`, `LC_NUMERIC`, `LC_MONETARY`, `LC_MESSAGES` and `LC_ALL` (which overrides the rest). The files are `/etc/locale.conf` and `/etc/locale.gen`.",
+  "`locale` shows the current settings and `locale -a` lists the available ones. `localectl` offers `list-locales`, `set-locale LANG=...`, `set-keymap us` and `set-x11-keymap us`. For dates, use `date \"+%Y-%m-%d\"`, `date -s` to set the time and `cal` for a calendar.",
+ ]},
+]}
+];

@@ -1,4 +1,5 @@
 <Solution>
+  <Folder Name="/Current_site/" />
   <Folder Name="/Solution Items/">
     <File Path="publish_site.ps1" />
   </Folder>
