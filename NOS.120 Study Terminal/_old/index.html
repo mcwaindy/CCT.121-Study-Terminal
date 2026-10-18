@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>NOS.120 Study Terminal</title>
+    <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+    <div id="app" class="app-container">
+        <!-- Navigation Sidebar -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <h1>NOS.120</h1>
+                <p class="subtitle">Study Terminal</p>
+            </div>
+
+            <ul class="nav-menu">
+                <li><a href="#" data-section="dashboard" class="nav-link active" data-icon="📊">Dashboard</a></li>
+                <li><a href="#" data-section="notes" class="nav-link" data-icon="📝">Study Notes</a></li>
+                <li><a href="#" data-section="flashcards" class="nav-link" data-icon="🎴">Flashcards</a></li>
+                <li><a href="#" data-section="quizzes" class="nav-link" data-icon="📋">Quizzes</a></li>
+                <li><a href="#" data-section="commands" class="nav-link" data-icon="⌨️">Commands</a></li>
+                <li><a href="#" data-section="terminal" class="nav-link" data-icon="💻">Command Tester</a></li>
+                <li><a href="#" data-section="progress" class="nav-link" data-icon="📈">Progress Tracker</a></li>
+            </ul>
+
+            <div class="sidebar-footer">
+                <button id="resetBtn" class="btn-secondary btn-sm">Reset Progress</button>
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Dashboard Section -->
+            <section id="dashboard" class="section active">
+                <div class="section-header">
+                    <h2>Study Dashboard</h2>
+                    <p>Track your progress and get recommended focus areas</p>
+                </div>
+
+                <div class="dashboard-grid">
+                    <div class="card stat-card">
+                        <div class="stat-value" id="overallProgress">75%</div>
+                        <div class="stat-label">Overall Progress</div>
+                    </div>
+
+                    <div class="card stat-card">
+                        <div class="stat-value" id="flashcardProgress">8/12</div>
+                        <div class="stat-label">Flashcards Mastered</div>
+                    </div>
+
+                    <div class="card stat-card">
+                        <div class="stat-value" id="commandProgress">5/10</div>
+                        <div class="stat-label">Commands Mastered</div>
+                    </div>
+
+                    <div class="card stat-card">
+                        <div class="stat-value" id="quizAverage">82%</div>
+                        <div class="stat-label">Avg Quiz Score</div>
+                    </div>
+                </div>
+
+                <div class="dashboard-section">
+                    <h3>Readiness Assessment</h3>
+                    <div class="card readiness-card">
+                        <div id="readinessStatus" class="readiness-status not-ready">Not Ready</div>
+                        <p id="readinessMessage" class="readiness-message"></p>
+                        <div id="readinessDetails" class="readiness-details"></div>
+                    </div>
+                </div>
+
+                <div class="dashboard-section">
+                    <h3>Weak Areas</h3>
+                    <div id="weakAreasContainer" class="weak-areas-grid"></div>
+                </div>
+
+                <div class="dashboard-section">
+                    <h3>Recommended Focus</h3>
+                    <div id="focusRecommendation" class="card focus-card"></div>
+                </div>
+            </section>
+
+            <!-- Study Notes Section -->
+            <section id="notes" class="section">
+                <div class="section-header">
+                    <h2>Study Notes</h2>
+                    <p>Concept-focused notes with key commands and terminology</p>
+                </div>
+
+                <div class="section-controls">
+                    <input type="text" id="notesSearch" class="search-input" placeholder="Search notes...">
+                    <select id="moduleSelect" class="select-input">
+                        <option value="">All Modules</option>
+                        <option value="Module1">Module 1: Linux Fundamentals</option>
+                        <option value="Module2">Module 2: Installation & Shell</option>
+                        <option value="Module3">Module 3: Filesystem</option>
+                        <option value="Module4">Module 4: File Management & Permissions</option>
+                        <option value="Module5">Module 5: Filesystem Administration</option>
+                        <option value="Module6">Module 6: Server Administration</option>
+                        <option value="Module8">Module 8: System Initialization & X Windows</option>
+                    </select>
+                </div>
+
+                <div id="notesContainer" class="notes-container"></div>
+            </section>
+
+            <!-- Flashcards Section -->
+            <section id="flashcards" class="section">
+                <div class="section-header">
+                    <h2>Flashcards</h2>
+                    <p>Master key concepts with interactive flashcards</p>
+                </div>
+
+                <div class="section-controls">
+                    <button id="allCardsBtn" class="btn-secondary active">All Cards</button>
+                    <button id="unmasteredBtn" class="btn-secondary">Unmastered Only</button>
+                    <select id="flashcardModuleSelect" class="select-input">
+                        <option value="">All Modules</option>
+                        <option value="Module1">Module 1</option>
+                        <option value="Module2">Module 2</option>
+                        <option value="Module3">Module 3</option>
+                        <option value="Module4">Module 4</option>
+                        <option value="Module5">Module 5</option>
+                        <option value="Module6">Module 6</option>
+                        <option value="Module8">Module 8</option>
+                    </select>
+                </div>
+
+                <div id="flashcardStats" class="stats-bar">
+                    <span>Card <span id="currentCard">1</span> of <span id="totalCards">0</span></span>
+                    <span id="masteredCount">0 mastered</span>
+                </div>
+
+                <div id="cardContainer" class="card-container">
+                    <div id="flashcard" class="flashcard">
+                        <div class="card-inner">
+                            <div class="card-front">
+                                <div id="cardFront" class="card-content">Click to load a card</div>
+                                <div class="card-hint">Click to reveal answer</div>
+                            </div>
+                            <div class="card-back">
+                                <div id="cardBack" class="card-content">Answer</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flashcard-controls">
+                    <button id="prevCardBtn" class="btn-secondary">← Previous</button>
+                    <button id="markMasteredBtn" class="btn-primary">Mark as Mastered ✓</button>
+                    <button id="nextCardBtn" class="btn-secondary">Next →</button>
+                </div>
+            </section>
+
+            <!-- Quizzes Section -->
+            <section id="quizzes" class="section">
+                <div class="section-header">
+                    <h2>Practice Quizzes</h2>
+                    <p>Test your knowledge with customizable quizzes</p>
+                </div>
+
+                <div id="quizList" class="quiz-list"></div>
+
+                <div id="quizContainer" class="quiz-container hidden">
+                    <div class="quiz-header">
+                        <h3 id="quizTitle"></h3>
+                        <div class="quiz-progress">
+                            <span id="questionNumber"></span>
+                            <span id="timeRemaining"></span>
+                        </div>
+                    </div>
+
+                    <div id="questionContainer" class="question-container"></div>
+
+                    <div class="quiz-controls">
+                        <button id="prevQuestionBtn" class="btn-secondary">← Previous</button>
+                        <button id="nextQuestionBtn" class="btn-secondary">Next →</button>
+                        <button id="submitQuizBtn" class="btn-primary">Submit Quiz</button>
+                    </div>
+                </div>
+
+                <div id="quizResultsContainer" class="hidden"></div>
+            </section>
+
+            <!-- Commands Section -->
+            <section id="commands" class="section">
+                <div class="section-header">
+                    <h2>Command Reference</h2>
+                    <p>Interactive list of Linux commands with descriptions and examples</p>
+                </div>
+
+                <div class="section-controls">
+                    <input type="text" id="commandSearch" class="search-input" placeholder="Search commands...">
+                    <select id="commandModuleSelect" class="select-input">
+                        <option value="">All Modules</option>
+                        <option value="Module1">Module 1</option>
+                        <option value="Module2">Module 2</option>
+                        <option value="Module3">Module 3</option>
+                        <option value="Module4">Module 4</option>
+                        <option value="Module5">Module 5</option>
+                        <option value="Module6">Module 6</option>
+                        <option value="Module8">Module 8</option>
+                    </select>
+                </div>
+
+                <div id="commandList" class="command-list"></div>
+            </section>
+
+            <!-- Command Tester Section -->
+            <section id="terminal" class="section">
+                <div class="section-header">
+                    <h2>Command Tester</h2>
+                    <p>Practice commands in two modes: Test Yourself or Command Challenge</p>
+                </div>
+
+                <div class="mode-selector">
+                    <button id="modeTestBtn" class="btn-secondary active">Test Yourself</button>
+                    <button id="modeChallengeBtn" class="btn-secondary">Command Challenge</button>
+                                        <button id="modeShellBtn" class="btn-secondary">Free Shell</button>
+                </div>
+
+                <div id="testYourselfMode" class="mode-content active">
+                    <div class="card">
+                        <h3>Test Yourself</h3>
+                        <p>Select a command and verify its correct usage</p>
+                        <select id="testCommandSelect" class="select-input">
+                            <option value="">Choose a command...</option>
+                        </select>
+                        <div id="testCommandDetails" class="command-details hidden"></div>
+                        <div class="input-group">
+                            <label>Enter the command:</label>
+                            <input type="text" id="testInput" class="input-field" placeholder="Enter command syntax">
+                            <button id="testSubmitBtn" class="btn-primary">Check</button>
+                        </div>
+                        <div id="testResult" class="result-box hidden"></div>
+                    </div>
+                </div>
+
+                <div id="challengeMode" class="mode-content">
+                    <div class="shell-toolbar">
+                        <select id="challengeModule" class="select-input">
+                            <option value="">All Modules</option><option value="2">Module 2</option><option value="3">Module 3</option><option value="4">Module 4</option><option value="5">Module 5</option><option value="6">Module 6</option><option value="8">Module 8</option>
+                        </select>
+                        <label><input type="checkbox" id="challengeHideDone"> Hide completed</label>
+                        <span id="challengeScore"></span>
+                    </div>
+                    <div class="card challenge-card">
+                        <div id="challengeTitle" class="challenge-title"></div>
+                        <div id="challengeTask" class="challenge-task"></div>
+                        <div class="shell-toolbar">
+                            <button id="challengeHintBtn" class="btn-secondary btn-sm">Show Hint</button>
+                            <button id="challengeRestartBtn" class="btn-secondary btn-sm">Restart Task</button>
+                            <button id="challengeSkipBtn" class="btn-secondary btn-sm">Skip</button>
+                            <button id="challengeNextBtn" class="btn-primary btn-sm hidden">Next Task</button>
+                        </div>
+                        <div id="challengeHint" class="muted hidden"></div>
+                        <div id="challengeResult" class="result-box hidden"></div>
+                    </div>
+                    <div id="chTerminal" class="shell-terminal">
+                        <div id="chOutput" class="shell-output"></div>
+                        <div class="shell-input-row"><span>student@nos120:~$</span><input id="chInput" type="text" autocomplete="off" spellcheck="false" placeholder="Complete the task here"></div>
+                    </div>
+                </div>
+
+                <div id="shellMode" class="mode-content">
+                    <div class="shell-toolbar">
+                        <button id="shellClearScreen" class="btn-secondary btn-sm">Clear Screen</button>
+                        <button id="shellClearLog" class="btn-secondary btn-sm">Clear Log</button>
+                        <button id="shellResetFs" class="btn-secondary btn-sm">Reset Filesystem</button>
+                        <label><input type="checkbox" id="shellAutoClear"> Reset everything when leaving this mode</label>
+                    </div>
+                    <div class="shell-layout">
+                        <div id="shellTerminal" class="shell-terminal">
+                            <div id="shellOutput" class="shell-output"></div>
+                            <div class="shell-input-row"><span>student@nos120:~$</span><input id="shellInput" type="text" autocomplete="off" spellcheck="false" placeholder="Type any command (try: help, mkdir a, tree)"></div>
+                        </div>
+                        <div class="shell-side">
+                            <div class="card"><h4>Commands Used</h4><div id="shellDefs"></div></div>
+                            <div class="card"><h4>Command Log</h4><div id="shellLog"></div></div>
+                        </div>
+                    </div>
+                </div>
+
+                <div id="shortcutFeedback" class="shortcut-feedback">
+                    <h3>Quick Feedback</h3>
+                    <div id="feedbackList" class="feedback-list"></div>
+                </div>
+            </section>
+
+            <!-- Progress Tracker Section -->
+            <section id="progress" class="section">
+                <div class="section-header">
+                    <h2>Progress Tracker</h2>
+                    <p>Comprehensive overview of your study progress</p>
+                </div>
+
+                <div class="progress-overview">
+                    <div class="card">
+                        <h3>Overall Progress</h3>
+                        <div class="progress-bar">
+                            <div id="progressFill" class="progress-fill" style="width: 0%"></div>
+                        </div>
+                        <p id="progressText">0%</p>
+                    </div>
+                </div>
+
+                <div class="progress-grid">
+                    <div class="card">
+                        <h3>Flashcards</h3>
+                        <div id="flashcardProgressDetail"></div>
+                    </div>
+                    <div class="card">
+                        <h3>Commands</h3>
+                        <div id="commandProgressDetail"></div>
+                    </div>
+                    <div class="card">
+                        <h3>Quizzes</h3>
+                        <div id="quizProgressDetail"></div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Module-by-Module Progress</h3>
+                    <div id="moduleProgressList" class="module-progress-list"></div>
+                </div>
+
+                <div class="card">
+                    <h3>Weak Areas Requiring Focus</h3>
+                    <div id="focusAreasDetail" class="focus-areas"></div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="js/data/notes.js"></script>
+        <script src="js/data/flashcards.js"></script>
+        <script src="js/shell.js"></script>
+            <script src="js/data/challenges.js"></script>
+            <script src="js/challenge.js"></script>
+            <script src="js/notes.js"></script>
+        <script src="js/app.js"></script>
+</body>
+</html>

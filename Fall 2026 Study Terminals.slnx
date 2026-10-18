@@ -1,0 +1,8 @@
+<Solution>
+  <Folder Name="/Solution Items/">
+    <File Path="publish_site.ps1" />
+  </Folder>
+  <Project Path="CCT.121 Study Terminal/CCT.121 Study Terminal.csproj" />
+  <Project Path="Dashboard/Dashboard.csproj" Id="26a9a6a8-73c0-4d87-8e90-c90788e581dd" />
+  <Project Path="NOS.120 Study Terminal/NOS.120 Study Terminal.csproj" Id="13f519e4-24fe-452a-b781-657fe5fc3388" />
+</Solution>

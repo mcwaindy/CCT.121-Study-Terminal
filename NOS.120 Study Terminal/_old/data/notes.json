@@ -1,0 +1,336 @@
+{
+  "notes": [
+    {
+      "id": "note-1",
+      "module": "Module1",
+      "title": "Linux Fundamentals & Kernel Basics",
+      "content": "Understanding the core components and philosophy of Linux",
+      "concepts": [
+        "Linux Kernel - manages hardware and system resources",
+        "Unix Philosophy - do one thing and do it well",
+        "System Calls - interface between user programs and kernel",
+        "Daemon processes - background system services",
+        "POSIX compliance - portable operating system interface"
+      ],
+      "terminology": [
+        "kernel: The core of the OS managing hardware/resources",
+        "shell: Command interpreter (bash, zsh, sh)",
+        "daemon: Background process running without user interaction",
+        "process: Running instance of a program with unique ID (PID)",
+        "environment variables: Named values accessible to programs",
+        "tty: Terminal device representing a user connection",
+        "inode: Data structure storing file metadata",
+        "superuser/root: User with unrestricted system access (UID 0)"
+      ],
+      "keyCommands": [
+        "uname - show system information",
+        "whoami - display current user",
+        "id - show user/group info",
+        "ps - list running processes",
+        "top - monitor system resources in real-time",
+        "uptime - show how long system has been running"
+      ]
+    },
+    {
+      "id": "note-2",
+      "module": "Module1",
+      "title": "Linux Boot Process",
+      "content": "Understanding BIOS/UEFI, bootloader, and system initialization",
+      "concepts": [
+        "BIOS/UEFI - firmware that initializes hardware",
+        "MBR/GPT - partition tables for disk organization",
+        "Bootloader - loads kernel into memory (GRUB, systemd-boot)",
+        "Kernel initialization - detects hardware, mounts root filesystem",
+        "Init system - first process (PID 1) managing services"
+      ],
+      "terminology": [
+        "BIOS: Basic Input/Output System - legacy firmware",
+        "UEFI: Unified Extensible Firmware Interface - modern firmware replacement",
+        "MBR: Master Boot Record - legacy boot sector",
+        "GPT: GUID Partition Table - modern partitioning scheme",
+        "GRUB: GRand Unified Bootloader - common Linux bootloader",
+        "multiboot: Ability to choose OS at boot time",
+        "runlevel: Numeric representation of system state (0-6)",
+        "systemd: Modern init system for service management"
+      ],
+      "keyCommands": [
+        "grub-mkconfig - generate GRUB configuration",
+        "systemctl - control systemd services",
+        "journalctl - view systemd logs",
+        "runlevel - check current runlevel",
+        "init - change runlevel (old method)",
+        "reboot - restart system"
+      ]
+    },
+    {
+      "id": "note-3",
+      "module": "Module2",
+      "title": "Shell Fundamentals & Environment",
+      "content": "Shells, commands, variables, and command expansion",
+      "concepts": [
+        "Shells - interpreters that process user commands",
+        "Bash vs other shells - feature differences and compatibility",
+        "Command structure - command, arguments, options, redirection",
+        "Environment variables - configuration values for processes",
+        "Command substitution & expansion - parameter expansion, globbing",
+        "Quoting & escaping - controlling special character interpretation"
+      ],
+      "terminology": [
+        "shell: Command interpreter processing user input",
+        "bash: Bourne Again Shell - most common Linux shell",
+        "prompt: Text displayed waiting for user input",
+        "built-in: Command executed internally by shell (not external)",
+        "alias: Shorthand for frequently used commands",
+        "variable: Named storage for values",
+        "glob: Pattern matching with *, ?, [ ]",
+        "escape: Using backslash to prevent special meaning"
+      ],
+      "keyCommands": [
+        "echo - display text or variable values",
+        "export - make variable available to child processes",
+        "source/. - execute commands from file in current shell",
+        "alias - create command shortcuts",
+        "unalias - remove command shortcuts",
+        "type - show command type (built-in, alias, etc)"
+      ]
+    },
+    {
+      "id": "note-4",
+      "module": "Module3",
+      "title": "Linux Filesystem Hierarchy",
+      "content": "Directory structure and Filesystem Hierarchy Standard (FHS)",
+      "concepts": [
+        "FHS - standardized directory organization",
+        "Root filesystem - essential system files",
+        "bin vs sbin - user vs system binaries",
+        "Various /etc directories - configurations",
+        "/var data - dynamic data: logs, spool, cache",
+        "/proc and /sys - kernel information interfaces"
+      ],
+      "terminology": [
+        "FHS: Filesystem Hierarchy Standard",
+        "root directory (/): Top-level directory",
+        "inode: File metadata structure",
+        "hard link: Multiple names for same inode",
+        "symbolic link: Pointer to another file/directory",
+        "mounting: Attaching filesystem to directory tree",
+        "partition: Division of storage device",
+        "volume: Mounted storage containing files"
+      ],
+      "keyCommands": [
+        "ls - list directory contents",
+        "pwd - print working directory",
+        "cd - change directory",
+        "mkdir - create directories",
+        "mount - mount filesystems",
+        "umount - unmount filesystems",
+        "df - show disk space usage by filesystem",
+        "du - show disk usage of files/directories"
+      ]
+    },
+    {
+      "id": "note-5",
+      "module": "Module4",
+      "title": "File Permissions & Links",
+      "content": "Understanding Unix permissions model and file linking",
+      "concepts": [
+        "Permission bits - read (4), write (2), execute (1)",
+        "User-Group-Other model - rwx permissions for each",
+        "Special permissions - setuid, setgid, sticky bit",
+        "Hard links - shared inode references",
+        "Symbolic links - pathname-based pointers",
+        "Permission inheritance - defaults and umask"
+      ],
+      "terminology": [
+        "permissions: Access control for files/directories",
+        "rwx: read (r=4), write (w=2), execute (x=1) bits",
+        "umask: Default permissions mask for new files",
+        "setuid: Execute with file owner privileges",
+        "setgid: Execute with group privileges or inherit directory GID",
+        "sticky bit: Only owner can delete file in directory",
+        "hard link: Multiple directory entries sharing same inode",
+        "symlink/soft link: File containing path to another file"
+      ],
+      "keyCommands": [
+        "chmod - change file permissions",
+        "chown - change file owner",
+        "chgrp - change group owner",
+        "ln - create hard links",
+        "ln -s - create symbolic links",
+        "stat - show detailed file information",
+        "umask - set/show default permissions mask",
+        "getfacl/setfacl - manage ACLs (advanced permissions)"
+      ]
+    },
+    {
+      "id": "note-6",
+      "module": "Module4",
+      "title": "Managing Files & Directories",
+      "content": "File operations, copying, moving, deletion",
+      "concepts": [
+        "File copying - cp with recursion and force options",
+        "Moving/renaming - mv preserves ownership and permissions",
+        "Safe deletion - rm caution and recovery considerations",
+        "Directory operations - mkdir with parents, rmdir",
+        "Globbing patterns - wildcards for multiple files",
+        "File searching - find with various criteria"
+      ],
+      "terminology": [
+        "recursive: Applies operation to directory and all contents",
+        "force: Override protection settings without prompting",
+        "preserve: Keep original file attributes when copying",
+        "target: Destination file or directory",
+        "source: File or directory being copied/moved",
+        "pattern: String with wildcards for matching multiple files",
+        "criteria: Selection conditions for find command",
+        "predicate: Test condition in find expressions"
+      ],
+      "keyCommands": [
+        "cp - copy files and directories",
+        "cp -r - recursive copy",
+        "mv - move or rename files",
+        "rm - delete files",
+        "rm -r - recursive delete (BE CAREFUL)",
+        "rmdir - remove empty directories",
+        "find - search files by criteria",
+        "locate - find files by name in database"
+      ]
+    },
+    {
+      "id": "note-7",
+      "module": "Module5",
+      "title": "Filesystem Administration",
+      "content": "Partitioning, filesystems, mounting, and maintenance",
+      "concepts": [
+        "Partitioning - dividing disks into sections",
+        "Filesystem types - ext4, XFS, Btrfs, NTFS",
+        "Creating filesystems - mkfs and formatting",
+        "Mounting/unmounting - attaching to directory tree",
+        "Automatic mounting - /etc/fstab configuration",
+        "Filesystem checking - fsck and recovery tools"
+      ],
+      "terminology": [
+        "partition: Logical division of storage device",
+        "filesystem: Organization of files and metadata on storage",
+        "mount point: Directory where filesystem is attached",
+        "fstab: File Stab - table of filesystems to mount at boot",
+        "device node: File representing hardware (e.g., /dev/sda1)",
+        "journaling: Recording changes before committing to prevent corruption",
+        "UUID: Universally Unique Identifier for persistent device naming",
+        "fsck: Filesystem check tool for finding and fixing issues"
+      ],
+      "keyCommands": [
+        "fdisk - partition disk editor",
+        "parted - GNU Partition Editor",
+        "mkfs - create filesystem",
+        "mount - mount filesystem",
+        "umount - unmount filesystem",
+        "fsck - filesystem check and repair",
+        "blkid - show block device attributes",
+        "lsblk - list block devices"
+      ]
+    },
+    {
+      "id": "note-8",
+      "module": "Module6",
+      "title": "User & Group Administration",
+      "content": "Managing user accounts and group membership",
+      "concepts": [
+        "User accounts - local authentication and system accounts",
+        "UID/GID - numeric identifiers for users and groups",
+        "Password management - /etc/passwd, /etc/shadow encryption",
+        "Group membership - primary and supplementary groups",
+        "User creation/deletion - useradd, userdel commands",
+        "Home directories - user login environment setup"
+      ],
+      "terminology": [
+        "UID: User Identifier - numeric ID for user",
+        "GID: Group Identifier - numeric ID for group",
+        "passwd: Password file storing user account info",
+        "shadow: Shadow password file storing encrypted passwords",
+        "primary group: Default group for user's files",
+        "supplementary group: Additional group memberships",
+        "skeleton: Template files copied to new home directory",
+        "sudoers: File controlling sudo privilege escalation"
+      ],
+      "keyCommands": [
+        "useradd - create user account",
+        "userdel - delete user account",
+        "passwd - change/set user password",
+        "usermod - modify user account",
+        "groupadd - create group",
+        "groupdel - delete group",
+        "id - show user and group info",
+        "groups - list user's groups"
+      ]
+    },
+    {
+      "id": "note-9",
+      "module": "Module6",
+      "title": "Sudo & Privilege Escalation",
+      "content": "Granting elevated privileges safely and securely",
+      "concepts": [
+        "Principle of least privilege - minimal required permissions",
+        "sudo mechanism - temporary privilege escalation with logging",
+        "sudoers file - configuration for sudo access control",
+        "visudo - safe editor for /etc/sudoers",
+        "Logging sudo activity - security auditing and accountability",
+        "Alternatives to sudo - su command and setuid"
+      ],
+      "terminology": [
+        "privilege escalation: Gaining higher-level access",
+        "sudo: SuperUser DO - run command as another user",
+        "sudoers: File controlling who can use sudo",
+        "visudo: Safe editor validating sudoers syntax",
+        "nopass: Allow command without password prompt",
+        "policy: Set of sudo rules for specific user/group",
+        "audit log: Record of who ran what command when",
+        "su: Switch User - change to different user account"
+      ],
+      "keyCommands": [
+        "sudo - execute command with elevated privileges",
+        "sudo -i - start root shell",
+        "sudo -u user - run as specific user",
+        "visudo - edit sudoers file safely",
+        "su - - switch to root",
+        "su username - switch to specific user",
+        "sudo -l - list sudo privileges",
+        "sudo -k - forget sudo password"
+      ]
+    },
+    {
+      "id": "note-10",
+      "module": "Module8",
+      "title": "System Initialization & Runlevels",
+      "content": "Init systems, systemd, and service management",
+      "concepts": [
+        "Init system - first process managing all others",
+        "Traditional runlevels - 0-6 system states",
+        "systemd - modern replacement with service units",
+        "Service activation - manual, on-demand, automatic",
+        "Service dependencies - controlling startup order",
+        "Logging - journald system logging in systemd"
+      ],
+      "terminology": [
+        "init: First process (PID 1) managing system services",
+        "runlevel: Numeric system state 0-6",
+        "systemd: Modern init system using unit files",
+        "unit: systemd configuration for service/mount/etc",
+        "target: systemd grouping of units (like runlevels)",
+        "socket activation: Starting service on access",
+        "journald: Systemd journal logging daemon",
+        "cgroup: Control group for resource limiting"
+      ],
+      "keyCommands": [
+        "systemctl - control systemd services",
+        "systemctl start - start service",
+        "systemctl stop - stop service",
+        "systemctl enable - auto-start at boot",
+        "systemctl disable - don't auto-start",
+        "systemctl status - show service status",
+        "systemctl list-units - show all units",
+        "journalctl - view journal logs"
+      ]
+    }
+  ]
+}
