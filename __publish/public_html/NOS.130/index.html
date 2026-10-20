@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="theme-color" content="#0d1117">
+<title>NOS.130 Study Terminal</title>
+<link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+<header id="topbar">
+  <button id="menuBtn" title="Menu" aria-label="Menu">&#9776;</button>
+  <div class="brand"><span class="prompt">C:\&gt;</span> NOS.130 <small>Windows Single User</small></div>
+  <label class="scope">Scope <select id="scope"></select></label>
+  <input id="search" type="search" placeholder="Search notes &amp; glossary   ( / )" autocomplete="off">
+  <button id="themeBtn" title="Toggle theme">&#9680;</button>
+</header>
+<div id="layout">
+  <nav id="sidebar"></nav>
+  <main id="content"></main>
+</div>
+
+<!-- Engine -->
+<script src="js/core.js"></script>
+<!-- Study / practice modules (each file registers itself; add new modules here) -->
+<script src="js/modules/home.js"></script>
+<script src="js/modules/notes.js"></script>
+<script src="js/modules/flashcards.js"></script>
+<script src="js/modules/quiz.js"></script>
+<script src="js/modules/glossary.js"></script>
+<script src="js/modules/search.js"></script>
+<script src="js/modules/steps.js"></script>
+<script src="js/modules/batch.js"></script>
+<script src="js/modules/commands.js"></script>
+<!-- Boot: loads content/manifest.js, then every file it lists -->
+<script src="js/mobile.js"></script>
+<script src="js/boot.js"></script>
+</body>
+</html>
