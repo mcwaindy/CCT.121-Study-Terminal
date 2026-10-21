@@ -2,7 +2,7 @@
 CCT.addModule({
   id: "custody", title: "Chain of Custody", group: "Practice", order: 4,
   render(el) {
-    const sc = CCT.items("custody");
+    const sc = CCT.itemsAny("custody");
     const norm = s => String(s ?? "").toLowerCase().replace(/[.,]/g, "").replace(/\s+/g, " ").trim();
     const matches = (f, v) => { const n = norm(v); return n === norm(f.expect) || (f.accept || []).some(a => norm(a) === n); };
     const list = () => {

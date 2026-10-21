@@ -71,7 +71,8 @@
   };
   CCT.addModule = m => CCT.modules.push(m);
   CCT.items = key => CCT.chapters.filter(c => CCT.scope === "all" || c.id === CCT.scope).flatMap(c => c[key] || []);
-  CCT.chapter = id => CCT.chapters.find(c => c.id === id);
+  CCT.itemsAny = key => { const s = CCT.items(key); return s.length ? s : CCT.chapters.flatMap(c => c[key] || []); };
+  CCT.chapter = id =>
   CCT.chapterLabel = id => { const c = CCT.chapter(id); return c ? `Module ${c.num}` : id; };
 
   // ---- shell ----

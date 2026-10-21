@@ -2,7 +2,7 @@
 CCT.addModule({
   id: "procedures", title: "Procedures", group: "Practice", order: 3,
   render(el, arg) {
-    const procs = CCT.items("procedures");
+    const procs = CCT.itemsAny("procedures");
     const prog = CCT.store.get("proc", {});
     const list = () => {
       el.innerHTML = `<h1>Procedures</h1><div class="sub">Interactive walkthroughs of key forensic workflows.</div>

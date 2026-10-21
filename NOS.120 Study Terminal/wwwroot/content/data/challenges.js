@@ -53,6 +53,15 @@
         { m: 5, t: 'Mount point cleanup', task: 'Create /mnt/usb and /mnt/iso, then remove only /mnt/iso.', hint: 'mkdir /mnt/usb /mnt/iso; rmdir /mnt/iso', check: s => !!n(s, '/mnt/usb') && !n(s, '/mnt/iso') && ran(s, /mkdir/) },
         { m: 6, t: 'Device listing', task: 'List the contents of /dev in long format.', hint: 'ls -l /dev', check: s => ran(s, /ls\s+.*-\w*l.*\/dev/) },
         { m: 6, t: 'Log search', task: 'Find lines in /var/log/messages mentioning "systemd", ignoring case, with line numbers.', hint: 'grep -in systemd /var/log/messages', check: s => ran(s, /grep\s+(?=.*i)(?=.*n).*systemd.*messages/i) },
+		// Module 7
+		{ m: 7, t: 'Redirect and append', task: 'Create ~/log.txt containing "one", then append "two" so both lines remain.', hint: 'echo one > log.txt; echo two >> log.txt', check: s => (txt(s, '~/log.txt') || '').trim().split('\n').join(',') === 'one,two' },
+		{ m: 7, t: 'Discard errors', task: 'Run ls on a nonexistent path /nope while sending the error to /dev/null.', hint: 'ls /nope 2>/dev/null', check: s => ran(s, /ls\s+\/nope\s+2>\s*\/dev\/null/) },
+		{ m: 7, t: 'Pipe to count', task: 'Count the lines in /etc/passwd with a pipe and store the result in ~/lines.txt.', hint: 'cat /etc/passwd | wc -l > lines.txt', check: s => /^\d+/.test((txt(s, '~/lines.txt') || '').trim()) && ran(s, /\|\s*wc/) },
+		{ m: 7, t: 'Replace text with sed', task: 'Pipe "hello world" through sed to turn it into "HELLO world" and save it to ~/sed.txt.', hint: 'echo hello world | sed s/hello/HELLO/ > sed.txt', check: s => (txt(s, '~/sed.txt') || '').trim() === 'HELLO world' },
+		{ m: 7, t: 'User variable', task: 'Create a variable MYVAR set to hello, export it, and print it.', hint: 'MYVAR=hello; export MYVAR; echo $MYVAR', check: s => s.env.MYVAR === 'hello' && ran(s, /echo\s+\$MYVAR/) },
+		{ m: 7, t: 'Alias two commands', task: 'Create an alias dw that runs date;who and then use it.', hint: 'alias dw="date;who"; dw', check: s => !!s.aliases.dw && ran(s, /^\s*dw\b/) },
+		{ m: 7, t: 'Remove a variable', task: 'Create variable TEMPVAR=1, then remove it with unset.', hint: 'TEMPVAR=1; unset TEMPVAR', check: s => ran(s, /TEMPVAR=1/) && ran(s, /unset\s+TEMPVAR/) && s.env.TEMPVAR === undefined },
+		{ m: 7, t: 'Make a script executable', task: 'Create ~/hello.sh containing echo hi, make it executable with chmod, and run it with ./hello.sh.', hint: 'echo "echo hi" > hello.sh; chmod a+x hello.sh; ./hello.sh', check: s => !!txt(s, '~/hello.sh') && ((perm(s, '~/hello.sh') || 0) & 0o111) !== 0 && ran(s, /\.\/hello\.sh/) },
         { m: 8, t: 'Environment', task: 'Set an environment variable LANG to en_GB.UTF-8, then print it.', hint: 'export LANG=en_GB.UTF-8; echo $LANG', check: s => s.env.LANG === 'en_GB.UTF-8' && ran(s, /echo\s+\$LANG/) },
         { m: 8, t: 'Alias', task: 'Create an alias named ll for ls -l and then use it.', hint: "alias ll='ls -l'; ll", check: s => s.aliases.ll && ran(s, /^\s*ll\b/) }
     ];

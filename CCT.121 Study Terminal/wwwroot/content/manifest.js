@@ -5,6 +5,7 @@ CCT.manifest = [
   "ch2.js",
   "ch3.js",
   "ch4.js",
+  "ch6.js",
   "rpt.js"
 ];
 

@@ -32,7 +32,7 @@
     return out || "(empty)";
   };
   const hashOf = (img, e) => ({ md5: CCT.pseudoHash(img.id + e.path, 32), sha256: CCT.pseudoHash(img.id + e.path + "s", 64) });
-  const allImages = () => CCT.items("images");
+  const allImages = () => CCT.itemsAny("images");
   CCT.img = { SIGS, sigOf, entries, status, hexDump, hashOf, all: allImages };
 
   CCT.addModule({
