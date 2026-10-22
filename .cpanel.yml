@@ -1,0 +1,9 @@
+---
+deployment:
+  tasks:
+    - export DEPLOYPATH=/home/minderas/public_html
+    - /bin/mkdir -p $DEPLOYPATH/CCT.121 $DEPLOYPATH/NOS.120 $DEPLOYPATH/NOS.130
+    - /bin/cp -R "Dashboard/wwwroot/." $DEPLOYPATH/
+    - /bin/cp -R "CCT.121 Study Terminal/wwwroot/." $DEPLOYPATH/CCT.121/
+    - /bin/cp -R "NOS.120 Study Terminal/wwwroot/." $DEPLOYPATH/NOS.120/
+    - /bin/cp -R "NOS.130 Study Terminal/wwwroot/." $DEPLOYPATH/NOS.130/
